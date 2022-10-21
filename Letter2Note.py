@@ -35,10 +35,6 @@ track = 0
 time = 0
 tempo = 100 # In BPM
 midi_song.addTempo(track, time, tempo)
-#degrees  = [60, 62, 64, 65, 67, 69, 71, 72]  # MIDI note number # C major
-
-# for i, pitch in enumerate(degrees):
-#     midi_song.addNote(track, 0, pitch, time + i, 1, 100)
 
 # tempo where duration = 1000 ms == 1 second
 crotchet = 1000 # duration of a crochet (1 second)
@@ -96,23 +92,10 @@ letter2frequency_tab = {
 letter2duration = {}
 
 song = str(input("Enter a poem : ")) #"Le son des oiseaux sur la plage en couleur"
-harmony1 =  str(input("Enter a poem for harmony : "))
 
 # associate radomly the letters in letter2frequency_tab with the ones from duration_dict
 for letter in letter2frequency_tab.keys():
     letter2duration.update({letter : list(duration_dict.values())[random.randint(0, 3)]})
-
-# Loop over the different letters in song and replace them by their respective frequency
-# for letter in song.lower().replace(" ",""):
-#     winsound.Beep(letter2frequency_tab[letter], int(letter2duration[letter]))
-
-# midi_song.addTempo(track,int(len(song.lower().replace(" ", "")))/6,80)
-# midi_song.addTempo(track,int(len(song.lower().replace(" ", "")))/5,100)
-# midi_song.addTempo(track,int(len(song.lower().replace(" ", "")))/4,120)
-# midi_song.addTempo(track,int(len(song.lower().replace(" ", "")))/3,80)
-# midi_song.addTempo(track,int(len(song.lower().replace(" ", "")))/2,100)
-
-#int(len(song.lower().replace(" ", ""))/2)
 
 # Tempo pattern
 letter2tempo_tab = {}
@@ -130,25 +113,31 @@ print(letter2tempo_tab)
 #rythm_pattern1 = [1, 1, 0.5, 0.25, 0.25, 0.25, 0.25, 2]
 #rythm_pattern2 = [1, 0.5, 0.5, 1, 1, 0.5, 0.5, 2]
 
+# Note scale
+
+def make_scale(notes):
+    keys = ['C', 'D♭', 'D', 'E♭', 'E', 'F', 'G♭', 'G', 'A♭', 'A', 'B♭', 'B']
+
+    midi_nb_empty = []
+
+    for i in range(128):
+        if keys[i%12] in notes:
+            midi_nb_empty.append(i)
+    return midi_nb_empty
+
+C_major = make_scale(['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C'])
+D_major = make_scale(['D', 'E', 'G♭', 'G', 'A', 'B', 'D♭'])
+
 # Loop over the different letters in harmony1 and replace them by their respective frequency
 for i, letter in enumerate(song.lower().replace(" ", "")):
     #note_duration = rythm_pattern[i%len(rythm_pattern)]
-    #midi_song.addNote(track, 0, ord(letter)-50, time+i, note_duration, 100)
-    #midi_song.addNote(track, 0, ord(letter)-53, time+i, note_duration, 100)
-    #midi_song.addNote(track, 0, ord(letter)-55, time+i, note_duration, 100)
-    #midi_song.addNote(track, 0, ord(letter)-57, time+i, note_duration, 100)
-    midi_song.addNote(track, 0, ord(letter)-50, time, letter2tempo_tab[letter], 100)
-    midi_song.addText(track, time, letter)
+    midi_song.addNote(track, 0, C_major[ord(letter)-75], time, letter2tempo_tab[letter], 100)
+    # midi_song.addNote(track, 0, ord(letter)-53, time, letter2tempo_tab[letter], 100)
+    # midi_song.addNote(track, 0, ord(letter)-55, time, letter2tempo_tab[letter], 100)
+    # midi_song.addNote(track, 0, ord(letter)-57, time, letter2tempo_tab[letter], 100)
+    #midi_song.addNote(track, 0, ord(letter)-50, time, letter2tempo_tab[letter], 100)
     time = time + letter2tempo_tab[letter]
+    midi_song.addText(track, 0, song)
 
-with open("major-scale.mid", "wb") as output_file:
+with open("song.mid", "wb") as output_file:
     midi_song.writeFile(output_file)
-
-
-
-
-
-
-
-
-
